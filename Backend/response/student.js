@@ -27,7 +27,7 @@ class Response {
 
   static created(res, data, message = 'Data created successfully') {
     return res.status(201).json({
-      code: 200,
+      code: 201,
       success: true,
       message,
       data: {
