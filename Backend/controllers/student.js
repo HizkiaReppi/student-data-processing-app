@@ -70,6 +70,22 @@ export const updateData = async (req, res) => {
   }
 };
 
-export const deleteData = async (req, res) => {};
+export const deleteData = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const data = await Student.findByPk(id);
+
+    if (!data) {
+      Response.notFound(res);
+      return;
+    }
+
+    await data.destroy();
+
+    Response.deleted(res, data);
+  } catch (error) {
+    Response.serverError(res, error.message);
+  }
+};
 
 export const deleteAllData = async (req, res) => {};
