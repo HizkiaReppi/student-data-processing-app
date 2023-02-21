@@ -50,6 +50,26 @@ export const getDetailData = async (req, res) => {
   }
 };
 
+export const updateData = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+    const data = await Student.findByPk(id);
+
+    if (!data) {
+      Response.notFound(res);
+      return;
+    }
+
+    updateData.updatedAt = new Date();
+    await data.update(updateData);
+
+    Response.updated(res, data);
+  } catch (error) {
+    Response.serverError(res, error.message);
+  }
+};
+
 export const deleteData = async (req, res) => {};
 
 export const deleteAllData = async (req, res) => {};
