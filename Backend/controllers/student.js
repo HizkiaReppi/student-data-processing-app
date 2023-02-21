@@ -82,10 +82,18 @@ export const deleteData = async (req, res) => {
 
     await data.destroy();
 
-    Response.deleted(res, data);
+    Response.deleted(res);
   } catch (error) {
     Response.serverError(res, error.message);
   }
 };
 
-export const deleteAllData = async (req, res) => {};
+export const deleteAllData = async (req, res) => {
+  try {
+    await Student.destroy({ truncate: true });
+
+    Response.deleted(res);
+  } catch (error) {
+    Response.serverError(res, error.message);
+  }
+};

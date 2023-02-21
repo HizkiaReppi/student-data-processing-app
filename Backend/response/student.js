@@ -57,12 +57,8 @@ class Response {
     });
   }
 
-  static deleted(res, data) {
-    return res.status(200).json({
-      code: 200,
-      success: true,
-      message: `Data with id '${data.id}' deleted successfully`
-    });
+  static deleted(res, message = 'Data deleted successfully') {
+    return res.status(200).json({ code: 200, success: true, message });
   }
 
   static notFound(res, message = 'Data not found') {
