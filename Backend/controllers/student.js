@@ -11,7 +11,28 @@ export const addData = async (req, res) => {
   }
 };
 
-export const getAllData = async (req, res) => {};
+export const getAllData = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const data = await Student.findAll({
+      offset: (page - 1) * limit,
+      limit
+    });
+
+    const totalCount = await Student.count();
+    const totalPages = Math.ceil(totalCount / limit);
+
+    if (page > totalPages) {
+      Response.notFound(res, 'Page not found');
+      return;
+    }
+
+    Response.success(res, data, page, totalCount, totalPages);
+  } catch (error) {
+    Response.serverError(res, error.message);
+  }
+};
 
 export const getDetailData = async (req, res) => {};
 

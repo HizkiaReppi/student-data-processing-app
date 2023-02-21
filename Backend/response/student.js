@@ -1,6 +1,10 @@
 class Response {
-  static success(res, data, page, limit, message = 'Get all data successfully') {
-    return res.status(200).json({
+  static success(res, data, page, totalData, totalPage, message = 'Get all data successfully') {
+    return res
+      .header('X-Total-Count', totalData)
+      .header('X-Total-Page', totalPage)
+      .status(200)
+      .json({
       code: 200,
       success: true,
       message,
@@ -14,8 +18,8 @@ class Response {
         };
       }),
       pagination: {
-        totalData: data.length,
-        totalPage: Math.ceil(data.length / limit),
+        totalData,
+        totalPage,
         currentPage: page
       },
     });
