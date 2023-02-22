@@ -41,3 +41,16 @@ export const validateUser = (req, res, next) => {
 
   next();
 }
+
+export const validateLogin = (req, res, next) => {
+  const schema = Joi.object({
+    username: Joi.string().min(3).required(),
+    password: Joi.string().min(5).required()
+  });
+
+  const { error } = schema.validate(req.body);
+
+  if (error) return Response.badRequest(res, error.message)
+
+  next();
+}

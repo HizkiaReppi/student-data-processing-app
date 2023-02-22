@@ -8,7 +8,7 @@ dotenv.config()
 
 export const register = async (req, res) => {
   try {
-    const { name, username, email, password } = req.body
+    const { name, username, email, password } = req.body;
 
     const usernameExist = await User.findOne({
       where: {
@@ -17,8 +17,7 @@ export const register = async (req, res) => {
     });
 
     if(usernameExist) {
-      Response.badRequest(res, 'Username already exist')
-      return;
+      return Response.badRequest(res, 'Username already exist');
     }
 
     const emailExist = await User.findOne({
@@ -28,12 +27,11 @@ export const register = async (req, res) => {
     });
 
     if(emailExist) {
-      Response.badRequest(res, 'Email already exist')
-      return;
+      return Response.badRequest(res, 'Email already exist');
     }
     
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword =  await bcrypt.hash(password, salt)
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     const data = await User.create({
       name,
@@ -42,9 +40,42 @@ export const register = async (req, res) => {
       password: hashedPassword
     })
 
-    Response.success(res, data)
+    Response.success(res, data);
     
   } catch (error) {
-    Response.serverError(res, error.message)
+    Response.serverError(res, error.message);
+  }
+}
+
+export const login = async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    const user = await User.findOne({
+      where: {
+        username,
+      },
+    });
+
+    if (!user) {
+      return Response.unauthorized(res, 'Username not found');
+    }
+
+    const validPass = await bcrypt.compare(password, user.password);
+
+    if (!validPass) {
+      return Response.unauthorized(res, 'Invalid password');
+    }
+
+    const token = jwt.sign(
+      { id: user.id },
+      process.env.JTW_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    Response.login(res, user, token);
+
+  } catch (error) {
+    Response.serverError(res, error.message);
   }
 }
