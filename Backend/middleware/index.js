@@ -5,7 +5,11 @@
 */
 
 import Joi from "joi";
+import dotenv from 'dotenv';
+import User from "../models/user.js";
 import Response from "../response/student.js";
+
+dotenv.config();
 
 export const validateStudent = (req, res, next) => {
   const schema = Joi.object({
@@ -53,4 +57,17 @@ export const validateLogin = (req, res, next) => {
   if (error) return Response.badRequest(res, error.message)
 
   next();
+}
+
+export const validateToken = (req, res, next) => {
+  const token = req.header('authorization');
+  if (!token) return Response.unauthorized(res, 'Access Denied');
+
+  try {
+    const verified = jwt.verify(token, process.env.JTW_SECRET);
+    req.user = verified;
+    next();
+  } catch (error) {
+    Response.unauthorized(res, 'Invalid Token');
+  }
 }

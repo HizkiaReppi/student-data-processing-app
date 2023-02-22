@@ -14,7 +14,10 @@ class Response {
   }
 
   static login(res, data, token, message = 'Login successfully') {
-    return res.status(200).json({
+    return res
+      .header('authorization', token)
+      .status(200)
+      .json({
       code: 200,
       success: true,
       message,
